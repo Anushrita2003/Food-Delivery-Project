@@ -24,9 +24,15 @@ const addFood =async(req,res)=>{
     }
 }
 
-//all food list
+// all food list
 const listFood=async(req,res)=>{
-
+     try {
+    const foods = await foodModel.find({});
+    res.json({ success: true, data: foods });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching foods" });
+  }
 }
 
 export {addFood,listFood}
+
