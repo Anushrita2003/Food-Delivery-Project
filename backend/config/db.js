@@ -1,22 +1,34 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const mongoURI = process.env.MONGODB_URI
-
-if (!mongoURI) {
-  console.error("DB Connection Error: MONGODB_URI is not defined in .env")
-  process.exit(1)
-}
 
 export const connectDB = async () => {
+  const mongoURI = process.env.MONGODB_URI
+  const mongoURINonSrv = process.env.MONGODB_URI_NON_SRV
+
+  if (!mongoURI) {
+    console.error("DB Connection Error: MONGODB_URI is not defined in .env")
+    process.exit(1)
+  }
+
   try {
-    await mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 5000 })
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    })
     console.log("DB Connected")
   } catch (error) {
-    console.error("DB Connection Error:", error.message)
-    console.error("Please verify your MongoDB Atlas URI, network access, and DNS settings.")
+    if (mongoURINonSrv && error?.message?.includes("querySrv")) {
+      try {
+        await mongoose.connect(mongoURINonSrv, {
+          serverSelectionTimeoutMS: 10000,
+          connectTimeoutMS: 10000,
+        })
+        console.log("DB Connected")
+        return
+      } catch (err2) {
+        // fall through to generic error handling
+      }
+    }
+    console.error("DB Connection Error:", error.message || error)
     process.exit(1)
   }
 }

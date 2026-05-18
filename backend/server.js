@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
 
-dotenv.config()
+dotenv.config({ quiet: true })
 
 const app = express()
 const port = process.env.PORT || 4000

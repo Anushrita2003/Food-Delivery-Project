@@ -14,11 +14,19 @@ const storage =multer.diskStorage({
 
 })
 
-const upload=multer({storage:storage})
+const upload = multer({ storage: storage })
 
-foodRouter.post("/add",upload.single("image"),addFood)
-foodRouter.get("/list",listFood)
-foodRouter.get("/remove",removeFood);  
+const maybeUpload = (req, res, next) => {
+    const contentType = req.headers['content-type'] || ''
+    if (contentType.includes('multipart/form-data')) {
+        return upload.single('image')(req, res, next)
+    }
+    next()
+}
+
+foodRouter.post("/add", maybeUpload, addFood)
+foodRouter.get("/list", listFood)
+foodRouter.get("/remove", removeFood)
 
 
 

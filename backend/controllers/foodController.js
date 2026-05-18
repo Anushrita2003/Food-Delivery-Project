@@ -4,23 +4,30 @@ import fs from 'fs'
 
 //add food items
 
-const addFood =async(req,res)=>{
-    console.log("API hit");
-    let image_filename=`${req.file.filename}`;
+const addFood = async (req, res) => {
+    let image_filename = req.body.image
+    if (req.file && req.file.filename) {
+        image_filename = req.file.filename
+    }
 
-    const food=new foodModel({
-        name:req.body.name,
-        description:req.body.description,
-        price:req.body.price,
-        category:req.body.category,
-        image:image_filename
+    if (!image_filename) {
+        return res.status(400).json({ success: false, message: "Image is required" })
+    }
+
+    const food = new foodModel({
+        name: req.body.name,
+        description: req.body.description,
+        price: Number(req.body.price) || 0,
+        category: req.body.category,
+        image: image_filename,
     })
-    try{
-        await food.save();
-        res.json({success:true,message:"Food Added"})
-    }catch(error){
-        console.log(error)
-        res.json({success:false, message:"Error"})
+
+    try {
+        const savedFood = await food.save()
+        res.json({ success: true, message: "Food Added", data: savedFood })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ success: false, message: "Error saving food" })
     }
 }
 
@@ -35,15 +42,17 @@ const listFood=async(req,res)=>{
 }
 // remove food item
 const removeFood=async(req,res)=>{
-    try{
-        const food=await foodModel.findById(req.body.id); 
-        fs.unlink(`uploads/${food.image}`,()=>{})
+    try {
+        const food = await foodModel.findById(req.body.id)
+        if (food && food.image) {
+            fs.unlink(`uploads/${food.image}`, () => {})
+        }
 
-        await foodModel.findByIdAndDelete(reg.body.id);
-        res.json({success:true,message:"Food Removed"})
-    }catch(error){
-        console.log(error);
-        res.json({success:false,message:"Error"})
+        await foodModel.findByIdAndDelete(req.body.id)
+        res.json({ success: true, message: "Food Removed" })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ success: false, message: "Error removing food" })
     }
 }
 
