@@ -14,7 +14,7 @@ export const connectDB = async () => {
       serverSelectionTimeoutMS: 10000,
       connectTimeoutMS: 10000,
     })
-    console.log("DB Connected")
+    console.log("DB Connected", mongoose.connection.name)
   } catch (error) {
     if (mongoURINonSrv && error?.message?.includes("querySrv")) {
       try {
@@ -22,7 +22,8 @@ export const connectDB = async () => {
           serverSelectionTimeoutMS: 10000,
           connectTimeoutMS: 10000,
         })
-        console.log("DB Connected")
+        console.log("DB Connected",mongoose.connection.name)
+        console.log("Host:", mongoose.connection.host);
         return
       } catch (err2) {
         // fall through to generic error handling

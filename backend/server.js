@@ -3,6 +3,11 @@ import cors from "cors"
 import dotenv from "dotenv"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config({ quiet: true })
 
@@ -12,7 +17,7 @@ const port = process.env.PORT || 4000
 app.use(express.json())
 app.use(cors())
 app.use("/api/food", foodRouter)
-app.use("/image", express.static("uploads"))
+app.use("/image", express.static(path.join(__dirname, 'uploads')))
 
 app.get("/", (req, res) => {
   res.send("API Working")

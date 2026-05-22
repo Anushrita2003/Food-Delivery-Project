@@ -1,5 +1,10 @@
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 
 //add food items
@@ -37,18 +42,33 @@ const listFood=async(req,res)=>{
     const foods = await foodModel.find({});
     res.json({ success: true, data: foods });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching foods" });
+    console.log(error);
+    res.json(500).json({ success: false, message: "Error fetching foods" });
   }
 }
 // remove food item
 const removeFood=async(req,res)=>{
     try {
-        const food = await foodModel.findById(req.body.id)
-        if (food && food.image) {
-            fs.unlink(`uploads/${food.image}`, () => {})
+        const id = req.body?.id || req.body?.ids?.[0] || req.params?.id || req.query?.id
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'Food id is required' })
         }
 
-        await foodModel.findByIdAndDelete(req.body.id)
+        const food = await foodModel.findById(id)
+        if (!food) {
+            return res.status(404).json({ success: false, message: 'Food item not found' })
+        }
+
+        const deletedFood = await foodModel.findByIdAndDelete(id)
+        if (deletedFood && deletedFood.image) {
+            const imgPath = path.join(__dirname, '..', 'uploads', deletedFood.image)
+            fs.unlink(imgPath, (err) => {
+                if (err) {
+                    console.error('Error deleting image file:', err)
+                }
+            })
+        }
+
         res.json({ success: true, message: "Food Removed" })
     } catch (error) {
         console.error(error)
