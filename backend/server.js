@@ -9,18 +9,32 @@ import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
 
 import path from 'path'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const isMainModule = process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url
 
 const app = express()
+const PORT = process.env.PORT || 4000
+
 // middleware
 app.use(express.json())
 app.use(cors())
 
-// database
-connectDB()
+const startServer = async () => {
+  await connectDB()
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+if (process.env.NODE_ENV !== 'test' && isMainModule) {
+  startServer().catch((error) => {
+    console.error('Failed to start server:', error)
+    process.exit(1)
+  })
+}
 
 // api endpoints
 app.use("/api/food", foodRouter)

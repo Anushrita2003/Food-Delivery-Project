@@ -5,11 +5,13 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const Stripe = require("stripe");
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 // Place Order
 const placeOrder = async (req, res) => {
-    const frontend_url = "http://localhost:5173";
+    const frontend_url = process.env.FRONTEND_URL || "http://localhost:5173";
 
     try {
         const newOrder = new orderModel({
@@ -43,6 +45,13 @@ const placeOrder = async (req, res) => {
             },
             quantity: 1,
         });
+
+        if (!stripe) {
+            return res.status(500).json({
+                success: false,
+                message: "Stripe is not configured on the server",
+            });
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
