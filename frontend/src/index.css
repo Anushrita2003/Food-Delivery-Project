@@ -25,3 +25,29 @@ a {
     opacity: 1;
   }
 }
+
+/* Admin App Scoped Styles */
+.admin-app {
+  min-height: 100vh;
+  background: #fcfcfc;
+}
+
+.admin-app hr {
+  border: none;
+  height: 1px;
+  background-color: #a9a9a9;
+}
+
+.admin-app .app-content {
+  display: flex;
+}
+
+.admin-app .flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-app .cursor {
+  cursor: pointer;
+}
