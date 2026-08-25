@@ -1,8 +1,8 @@
 import React from 'react'
-import './AdminNavbar.css'
-import { assets } from '../../assets/admin/assets'
+import './Navbar.css'
+import { assets } from '../../assets/assets'
 
-const AdminNavbar = () => {
+const Navbar = () => {
   return (
     <div className='navbar'>
         <img className='logo' src={assets.logo} alt="" />
@@ -11,4 +11,4 @@ const AdminNavbar = () => {
   )
 }
 
-export default AdminNavbar
+export default Navbar
