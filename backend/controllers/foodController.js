@@ -37,17 +37,17 @@ const addFood = async (req, res) => {
 }
 
 // all food list
-const listFood=async(req,res)=>{
-     try {
-    const foods = await foodModel.find({});
-    res.json({ success: true, data: foods });
-  } catch (error) {
-    console.log(error);
-    res.json(500).json({ success: false, message: "Error fetching foods" });
-  }
+const listFood = async (req, res) => {
+    try {
+        const foods = await foodModel.find({});
+        res.json({ success: true, data: foods });
+    } catch (error) {
+        console.log(error);
+        res.json(500).json({ success: false, message: "Error fetching foods" });
+    }
 }
 // remove food item
-const removeFood=async(req,res)=>{
+const removeFood = async (req, res) => {
     try {
         const id = req.body?.id || req.body?.ids?.[0] || req.params?.id || req.query?.id
         if (!id) {
@@ -76,5 +76,5 @@ const removeFood=async(req,res)=>{
     }
 }
 
-export {addFood,listFood,removeFood}
+export { addFood, listFood, removeFood }
 

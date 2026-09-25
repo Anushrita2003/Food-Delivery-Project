@@ -41,6 +41,7 @@ function PlaceOrder() {
     event.preventDefault();
 
     if (!token) {
+      alert("Please login to place an order.");
       navigate("/cart");
       return;
     }
@@ -54,6 +55,12 @@ function PlaceOrder() {
         orderItems.push(itemInfo);
       }
     });
+
+    if (orderItems.length === 0) {
+      alert("Your cart is empty. Please add items before placing an order.");
+      navigate("/cart");
+      return;
+    }
 
     const orderData = {
       address: data,
@@ -74,11 +81,11 @@ function PlaceOrder() {
         const { session_url } = response.data;
         window.location.replace(session_url);
       } else {
-        alert("Error placing order. Please try again.");
+        alert(response.data.message || "Error placing order. Please try again.");
       }
     } catch (error) {
-      console.log(error);
-      alert("Something went wrong.");
+      console.error("Place Order Error:", error);
+      alert(error.response?.data?.message || error.message || "Something went wrong.");
     }
   }
 
