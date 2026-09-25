@@ -43,7 +43,7 @@ const listFood=async(req,res)=>{
     res.json({ success: true, data: foods });
   } catch (error) {
     console.log(error);
-    res.json(500).json({ success: false, message: "Error fetching foods" });
+  res.status(500).json({ success: false, message: "Error fetching foods" });
   }
 }
 // remove food item

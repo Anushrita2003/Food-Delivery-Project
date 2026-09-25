@@ -1,4 +1,5 @@
 import express from "express"
+import fs from 'fs'
 import { addFood,listFood,removeFood } from "../controllers/foodController.js"
 import multer from "multer"
 import path from 'path'
@@ -7,12 +8,18 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const uploadsDir = path.join(__dirname, '..', 'uploads')
+// Ensure uploads directory exists so multer can write files
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true })
+}
+
 const foodRouter=express.Router();
 
 //Image Storage Engine
 
 const storage =multer.diskStorage({
-    destination: path.join(__dirname, '..', 'uploads'),
+    destination: uploadsDir,
     filename:(req,file,cb)=>{
         return cb(null,`${Date.now()}-${file.originalname}`)
     }
